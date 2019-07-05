@@ -1,0 +1,34 @@
+{
+  "publisher": "digitalturbine-newsplace",
+  "apiKey": "f44d224ed117102b74bed53b82e6079af28600d5",
+  "tabsConfig": [
+    {
+      "title": "Trending",
+      "placement": "AC-stream-trending-"
+    },
+    {
+      "title": "Sports",
+      "placement": "AC-sports-"
+    },
+    {
+      "title": "Business",
+      "placement": "AC-business-"
+    },
+    {
+      "title": "Entertainment",
+      "placement": "AC-entertainment-"
+    },
+    {
+      "title": "Tech",
+      "placement": "AC-tech-"
+    },
+    {
+      "title": "Politics",
+      "placement": "AC-politics-"
+    },
+    {
+      "title": "Lifestyle",
+      "placement": "AC-lifestyle-"
+    }
+  ]
+}
