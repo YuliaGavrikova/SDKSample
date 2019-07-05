@@ -19,7 +19,7 @@ public class AppConfig {
         return tabsConfig;
     }
 
-    class TabConfig {
+    public class TabConfig {
         private String title;
         private String placement;
 

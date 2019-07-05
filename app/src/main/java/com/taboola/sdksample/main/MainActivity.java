@@ -1,10 +1,14 @@
-package com.taboola.sdksample;
+package com.taboola.sdksample.main;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+
+import com.taboola.sdksample.AppConfig;
+import com.taboola.sdksample.R;
+import com.taboola.sdksample.SampleApplication;
 
 import java.util.List;
 
