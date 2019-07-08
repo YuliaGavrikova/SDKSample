@@ -14,7 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.taboola.android.api.TBRecommendationItem;
 import com.taboola.sdksample.R;
+
+import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -47,7 +50,7 @@ public class TabFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         recyclerView = view.findViewById(R.id.rv_main_category_tab);
         fab = view.findViewById(R.id.fab);
 
-//        feedAdapter = new FeedAdapter(); // todo
+        recyclerView.setAdapter(feedAdapter);
 
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(VERTICAL);
@@ -83,4 +86,18 @@ public class TabFragment extends Fragment implements SwipeRefreshLayout.OnRefres
             return null;
         }
     }
+
+    private void onContentFetched(List<TBRecommendationItem> items) {
+
+    }
+
+    private void addOnScrollListener(RecyclerView recyclerView) {
+        recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+
+            }
+        });
+    }
+
 }
