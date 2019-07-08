@@ -14,10 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.taboola.android.api.TBRecommendationItem;
+import com.taboola.android.api.TBPlacement;
 import com.taboola.sdksample.R;
-
-import java.util.List;
+import com.taboola.sdksample.SampleApplication;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -31,6 +30,8 @@ public class TabFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     private FeedAdapter feedAdapter;
     private LinearLayoutManager layoutManager;
+
+    private TBPlacement lastUsedPlacement;
 
     public static TabFragment newInstance(@NonNull String placementName) {
         Bundle data = new Bundle();
@@ -58,11 +59,34 @@ public class TabFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(feedAdapter);
         recyclerView.setHasFixedSize(true);
-
+        addOnScrollListener(recyclerView);
         swipeRefreshLayout.setOnRefreshListener(this);
-
+        fetchInitialContent();
 
         return view;
+    }
+
+    private void fetchInitialContent() {
+        String publisher = ((SampleApplication) getActivity().getApplicationContext())
+                .getAppConfig().getPublisher();
+        int thumbnailHeight = (int) getContext().getResources()
+                .getDimension(R.dimen.height_feed_article_short_thumbnail);
+        int thumbnailWidth = (int) getContext().getResources()
+                .getDimension(R.dimen.width_feed_article_short_thumbnail);
+        ContentRepository.getFirstContentBatch(publisher, getPlacementName(), 10,
+                thumbnailHeight, thumbnailWidth, new ContentRepository.ContentFetchCallback() {
+                    @Override
+                    public void onRecommendationsFetched(TBPlacement placement) {
+                        lastUsedPlacement = placement;
+                        // feedAdapter.addItems(placement.getItems());
+                    }
+
+                    @Override
+                    public void onRecommendationsFailed(Throwable t) {
+
+                    }
+                });
+        ContentRepository.getPlaceholderContent(3);
     }
 
     @Override
@@ -87,14 +111,25 @@ public class TabFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         }
     }
 
-    private void onContentFetched(List<TBRecommendationItem> items) {
-
-    }
-
     private void addOnScrollListener(RecyclerView recyclerView) {
         recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                String publisher = ((SampleApplication) getActivity().getApplicationContext())
+                        .getAppConfig().getPublisher();
+                ContentRepository.getNextBatchForPlacement(publisher, lastUsedPlacement,
+                        new ContentRepository.ContentFetchCallback() {
+                            @Override
+                            public void onRecommendationsFetched(TBPlacement placement) {
+                                lastUsedPlacement = placement;
+                            }
+
+                            @Override
+                            public void onRecommendationsFailed(Throwable t) {
+
+                            }
+                        });
+                ContentRepository.getPlaceholderContent(3);
 
             }
         });

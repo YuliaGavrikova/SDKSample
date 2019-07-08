@@ -23,7 +23,7 @@ import com.taboola.sdksample.utils.DateTimeUtil;
 
 import java.util.List;
 
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ShortItemViewHolder> implements View.OnClickListener {
+public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     @NonNull
@@ -31,18 +31,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ShortItemViewH
     private final int TYPE_SHORT_ITEM = 0;
     private final int TYPE_FAKE_ITEM = 1;
 
-    private List<TBRecommendationItem> items;
+
+    private List<Object> items;
 
     private OnAttributionClick mAttributionClickCallback;
 
-    public FeedAdapter(List<TBRecommendationItem> items, OnAttributionClick attributionClickCallback) {
+    public FeedAdapter(List<Object> items, OnAttributionClick attributionClickCallback) {
         this.items = items;
         mAttributionClickCallback = attributionClickCallback;
     }
 
     @NonNull
     @Override
-    public ShortItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case TYPE_SHORT_ITEM: {
@@ -50,22 +51,47 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ShortItemViewH
                         .inflate(R.layout.item_article_short, parent, false);
                 return new ShortItemViewHolder(shortItemLayout);
             }
-//            case TYPE_FAKE_ITEM: {
-//                ConstraintLayout fakeItemLayout = (ConstraintLayout) inflater
-//                        .inflate(R.layout.item_fake, parent, false);
-//                return new FakeItemViewHolder(fakeItemLayout);
-//            }
+            case TYPE_FAKE_ITEM: {
+                ConstraintLayout fakeItemLayout = (ConstraintLayout) inflater
+                        .inflate(R.layout.item_fake, parent, false);
+                return new FakeItemViewHolder(fakeItemLayout);
+            }
             default: {
                 throw new IllegalStateException("Unknown view type: " + viewType);
             }
         }
     }
 
+
     @Override
-    public void onBindViewHolder(FeedAdapter.ShortItemViewHolder viewHolder, int position) {
-        viewHolder.bind(items.get(position));
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (viewHolder instanceof ShortItemViewHolder) {
+            ((ShortItemViewHolder) viewHolder).bind((TBRecommendationItem) items.get(position));
+        } else if (viewHolder instanceof FakeItemViewHolder) {
+            ((FakeItemViewHolder) viewHolder).bind((FakeItemModel) items.get(position));
+        }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (items.get(position) instanceof TBRecommendationItem) {
+            return TYPE_SHORT_ITEM;
+        } else if (items.get(position) instanceof FakeItemModel) {
+            return TYPE_FAKE_ITEM;
+        } else {
+            throw new RuntimeException("Unknown item type");
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    void addItems(List<Object> allItems) {
+        items.addAll(allItems);
+        notifyDataSetChanged();
+    }
 
     class ShortItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -139,14 +165,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ShortItemViewH
                 ((ViewGroup) brandingLabel.getParent()).removeView(brandingLabel);
             }
             itemBranding.addView(brandingLabel);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    thumbnail.handleClick();
-                }
-            });
         }
     }
 
@@ -162,19 +180,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ShortItemViewH
             itemImage = itemView.findViewById(R.id.container_image);
         }
 
-        void bind() {
-            itemDescription.setText("1234567");
+        void bind(FakeItemModel item) {
+            itemDescription.setText(item.title);
             itemImage.setBackgroundColor(Color.BLUE);
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }
