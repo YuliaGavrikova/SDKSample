@@ -1,6 +1,8 @@
 package com.taboola.sdksample;
 
 import android.app.Application;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 
 import com.google.gson.Gson;
 import com.taboola.android.api.TaboolaApi;
@@ -13,11 +15,16 @@ public class SampleApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         String appConfigString = AssetUtil.getHtmlTemplateFileContent(this, APP_CONFIG_FILE_TITLE);
         appConfig = new Gson().fromJson(appConfigString, AppConfig.class);
 
-        TaboolaApi.getInstance()
-                .init(getApplicationContext(), appConfig.getPublisher(), appConfig.getApiKey());
+
+        Drawable imagePlaceholder = ResourcesCompat.getDrawable(getResources(), R.drawable.image_placeholder, null);
+
+        TaboolaApi.getInstance(appConfig.getPublisher())
+                .setImagePlaceholder(imagePlaceholder) // todo set other optional init params if you need to
+                .init(getApplicationContext(), appConfig.getApiKey());
     }
 
     public AppConfig getAppConfig() {
