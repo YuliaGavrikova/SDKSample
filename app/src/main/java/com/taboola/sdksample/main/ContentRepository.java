@@ -7,6 +7,9 @@ import com.taboola.android.api.TBRecommendationsRequest;
 import com.taboola.android.api.TBRecommendationsResponse;
 import com.taboola.android.api.TaboolaApi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ContentRepository {
 
     public interface ContentFetchCallback {
@@ -64,8 +67,15 @@ public class ContentRepository {
                 });
     }
 
-    public static void getPlaceholderContent(int numberOfItems) {
-        // todo impl
+    public static List<FakeItemModel> getPlaceholderContent(int numberOfItems) {
+        List<FakeItemModel> list = new ArrayList<>();
+        for (int i = 0; i < numberOfItems; i++) {
+            list.add(new FakeItemModel("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod " +
+                    "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+                    "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                    ""));
+        }
+        return list;
     }
 
 }
